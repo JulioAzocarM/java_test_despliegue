@@ -22,7 +22,7 @@ jobs:
       - name: Test
         run: mvn -B clean verify
 
-  # Solo en main, y solo si test pasó
+  # Solo en main, y solo si test pasó , pruebas en test
   package:
     needs: test
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
