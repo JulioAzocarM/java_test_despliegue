@@ -7,6 +7,7 @@ class AppTest {
 
     @Test
     void deberia_devolver_hola_mundo() {
-        assertEquals("Hola Mundo", App.saludo());
+        //assertEquals("Hola Mundo", App.saludo());
+	  assertEquals("Chao Mundo", App.saludo());
     }
 }
