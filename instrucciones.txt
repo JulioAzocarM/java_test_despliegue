@@ -1,0 +1,17 @@
+Sí, la idea es esa. Con un par de ajustes:
+
+-Eliminar la rama mala (feature/hola-mundo) en GitHub (opcional pero limpio).
+-En la web: crear feature/blabla desde main (importante: desde main).
+-En local: clonar el repo (no solo la rama) y entrar a esa feature:
+-git clone https://github.com/USUARIO/REPO.git
+-cd REPO
+-git checkout feature/blabla
+-Agregar Java, tests y el .yml.
+-git add → git commit → git push.
+-En GitHub: Compare & pull request
+-base: main
+-compare: feature/blabla
+-→ Create pull request.
+-Con eso ya deben compartir historial y sí aparece el botón verde.
+
+-Atajo equivalente: clonar, checkout main, checkout -b feature/blabla, commits, push; crear la rama en la web no es obligatorio.
