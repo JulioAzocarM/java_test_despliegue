@@ -1,0 +1,66 @@
+name: CI/CD Java
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Test
+        run: mvn -B clean verify
+
+  # Solo en main, y solo si test pasó , pruebas en test
+  package:
+    needs: test
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build JAR
+        run: mvn -B clean package -DskipTests
+
+      - name: Armar carpeta produccion
+        run: |
+          mkdir -p dist/java-test-despliegue
+          cp target/java-test-despliegue-*.jar dist/java-test-despliegue/
+          cp README.md dist/java-test-despliegue/ 2>/dev/null || true
+          echo "java -jar java-test-despliegue-1.0.0.jar" > dist/java-test-despliegue/EJECUTAR.txt
+          cd dist
+          zip -r java-test-despliegue-produccion.zip java-test-despliegue
+
+      - name: Subir ZIP (artifact descargable)
+        uses: actions/upload-artifact@v4
+        with:
+          name: paquete-produccion
+          path: dist/java-test-despliegue-produccion.zip
+
+      - name: Crear Release con el ZIP
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ github.run_number }}
+          name: Produccion build ${{ github.run_number }}
+          files: dist/java-test-despliegue-produccion.zip
+          generate_release_notes: true
